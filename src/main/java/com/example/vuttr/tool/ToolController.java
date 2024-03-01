@@ -2,6 +2,7 @@ package com.example.vuttr.tool;
 
 import java.net.URI;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +21,13 @@ public class ToolController {
     }
 
     @PostMapping(consumes = "application/json;charset=UTF-8")
-    public ResponseEntity<CreatedResponse> createTool(@RequestBody ToolForm request) {
-        CreatedToolModel model = useCase.createTool(Mapper.fromFormToRequest(request));
-        CreatedResponse response = Mapper.fromModelToResponse(model);
-        return ResponseEntity.created(getUri(response.id())).body(response);
+    public ResponseEntity<?> createTool(@RequestBody ToolForm request) {
+        Result result = useCase.createTool(Mapper.fromFormToRequest(request));
+        if (result instanceof CreatedToolModel model) {
+            CreatedResponse response = Mapper.fromModelToResponse(model);
+            return ResponseEntity.created(getUri(response.id())).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
     private URI getUri(int id) {

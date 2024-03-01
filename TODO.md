@@ -2,15 +2,16 @@
 
 ### Todo
 
-- [x] Create first test  
-- [x] Resolve first test
-- [ ] Create git repository  
-- [ ] Can't put same tool with same name
-- [ ] Make fake database from file
+- Make fake database from file  
 
 ### In Progress
 
+- Make get all endpoint  
 
 ### Done
 
+- Can't put same tool with same name  
+- Create git repository  
+- Resolve first test  
+- Create first test  
 

@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.vuttr.tool.CreatedResponse;
+import com.example.vuttr.tool.ErrorRecord;
 import com.example.vuttr.tool.ToolDataModel;
 import com.example.vuttr.tool.ToolDataSource;
 import com.example.vuttr.tool.ToolForm;
@@ -47,7 +48,8 @@ class CreateEndpointTest {
         String json = gson.toJson(createToolRequest());
 
         String responseJson = this.mockMvc
-                .perform(post("/tools").contentType(APPLICATION_JSON).content(json).accept(APPLICATION_JSON))
+                .perform(post("/tools").contentType(APPLICATION_JSON).content(json)
+                        .accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
@@ -65,10 +67,27 @@ class CreateEndpointTest {
         Gson gson = new Gson();
         String json = gson.toJson(createToolRequest());
 
-        this.mockMvc.perform(post("/tools").contentType(APPLICATION_JSON).content(json).accept(APPLICATION_JSON))
+        this.mockMvc.perform(
+                post("/tools").contentType(APPLICATION_JSON).content(json).accept(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", containsString("/4")));
+    }
+
+    @Test
+    void shouldReturnErrorIfAlreadyHasItemRegister() throws Exception {
+        when(toolDataSource.hasTool(any()))
+                .thenReturn(true);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(createToolRequest());
+
+        String responseJson = this.mockMvc.perform(
+                post("/tools").contentType(APPLICATION_JSON).content(json).accept(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isConflict()).andReturn().getResponse().getContentAsString();
+        ErrorRecord expected = gson.fromJson(responseJson, ErrorRecord.class);
+        assertThat(expected.message()).isEqualTo("Resource ToolTest already exists");
     }
 
     private ToolDataModel createToolModel(int id) {

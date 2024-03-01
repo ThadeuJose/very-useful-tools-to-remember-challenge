@@ -8,7 +8,10 @@ public class ToolUseCase {
         this.dataSource = dataSource;
     }
 
-    public CreatedToolModel createTool(CreatedRequest request) {
+    public Result createTool(CreatedRequest request) {
+        if (this.dataSource.hasTool(request.title())) {
+            return new ErrorRecord(String.format("Resource %s already exists", request.title()));
+        }
         ToolDataModel model = this.dataSource.save(fromRequestToDataModel(request));
         return new CreatedToolModel(model.id(), model.title(), model.link(), model.description(), model.tags());
     }

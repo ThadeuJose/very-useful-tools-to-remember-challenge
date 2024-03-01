@@ -10,4 +10,9 @@ public class FakeDataSource implements ToolDataSource {
         return new ToolDataModel(3, model.title(), model.link(), model.description(), model.tags());
     }
 
+    @Override
+    public boolean hasTool(String title) {
+        return false;
+    }
+
 }
