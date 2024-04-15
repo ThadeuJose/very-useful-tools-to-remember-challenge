@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,5 +33,11 @@ public class ToolController {
 
     private URI getUri(int id) {
         return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getTool() {
+        var responseList = useCase.getAllTools();
+        return ResponseEntity.ok().body(new GetAllToolsResponse(responseList));
     }
 }
